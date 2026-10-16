@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ShopProvider } from './context/ShopContext';
 import { CartProvider } from './context/CartContext';
 
@@ -52,10 +52,12 @@ function StoreLayout({ children }: { children: React.ReactNode }) {
 }
 
 export function App() {
+  const RouterComponent = typeof window !== 'undefined' && window.location.protocol === 'file:' ? HashRouter : BrowserRouter;
+
   return (
     <ShopProvider>
       <CartProvider>
-        <BrowserRouter>
+        <RouterComponent>
           <ScrollToTop />
           <StoreLayout>
             <Routes>
@@ -103,7 +105,7 @@ export function App() {
               <Route path="*" element={<HomePage />} />
             </Routes>
           </StoreLayout>
-        </BrowserRouter>
+        </RouterComponent>
       </CartProvider>
     </ShopProvider>
   );
