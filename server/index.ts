@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
@@ -8,6 +8,14 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Handle any malformed JSON gracefully
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON payload' });
+  }
+  next(err);
+});
 
 // Persistent Data Storage Paths
 const DATA_DIR = path.join(process.cwd(), 'server', 'data');
@@ -161,6 +169,16 @@ app.delete('/api/coupons/:code', (req: Request, res: Response) => {
   res.json({ success: true });
 });
 
-app.listen(PORT, () => {
-  console.log(`[Aura Western Server] API running on http://localhost:${PORT}`);
+// --- SERVE COMPILED FRONTEND FOR ANY NON-API ROUTE ---
+const DIST_DIR = path.join(process.cwd(), 'dist');
+if (fs.existsSync(DIST_DIR)) {
+  app.use(express.static(DIST_DIR));
+  app.get('*', (req: Request, res: Response, next: NextFunction) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(DIST_DIR, 'index.html'));
+  });
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`[Aura Western Server] API & Web App running on http://0.0.0.0:${PORT}`);
 });

@@ -4,14 +4,14 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev:frontend": "vite",
+    "dev:frontend": "vite --host 0.0.0.0 --port 5173",
     "dev:server": "tsx watch server/index.ts",
     "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"yellow.bold,cyan.bold\" \"npm run dev:server\" \"npm run dev:frontend\"",
     "build:frontend": "tsc && vite build",
     "build:server": "tsc -p server/tsconfig.json",
     "build": "npm run build:frontend",
     "start": "node dist-server/index.js",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0 --port 5173"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
