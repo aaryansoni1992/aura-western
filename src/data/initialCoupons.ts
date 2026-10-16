@@ -1,0 +1,42 @@
+import { Coupon } from '../types';
+
+export const INITIAL_COUPONS: Coupon[] = [
+  {
+    id: 'coup-1',
+    code: 'AURA10',
+    type: 'percentage',
+    value: 10,
+    minOrderValue: 999,
+    maxDiscount: 500,
+    active: true,
+    description: 'Get 10% OFF on all orders above ₹999 (Max ₹500 discount)'
+  },
+  {
+    id: 'coup-2',
+    code: 'FIRSTORDER',
+    type: 'fixed',
+    value: 200,
+    minOrderValue: 1499,
+    active: true,
+    description: 'Flat ₹200 OFF on your first purchase above ₹1,499'
+  },
+  {
+    id: 'coup-3',
+    code: 'RAJASTHAN50',
+    type: 'fixed',
+    value: 50,
+    minOrderValue: 499,
+    active: true,
+    description: 'Flat ₹50 OFF across Rajasthan on orders above ₹499'
+  },
+  {
+    id: 'coup-4',
+    code: 'FESTIVE15',
+    type: 'percentage',
+    value: 15,
+    minOrderValue: 1999,
+    maxDiscount: 750,
+    active: true,
+    description: 'Festival special: 15% OFF on trendy western wear above ₹1,999'
+  }
+];

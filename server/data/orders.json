@@ -1,0 +1,49 @@
+[
+  {
+    "reference": "AW-998877",
+    "customer": {
+      "fullName": "Sunita Rathore",
+      "phone": "9829012345",
+      "houseFlat": "401 Palace Road",
+      "streetLocality": "C-Scheme",
+      "landmark": "Near Central Park",
+      "city": "Jaipur",
+      "district": "Jaipur",
+      "pinCode": "302001",
+      "notes": "Please pack in luxury box"
+    },
+    "items": [
+      {
+        "productName": "Fuchsia Cutout Satin Midi Dress",
+        "size": "M",
+        "color": "Vibrant Fuchsia",
+        "quantity": 1,
+        "unitPrice": 1899,
+        "lineTotal": 1899
+      }
+    ],
+    "subtotal": 1899,
+    "couponCode": "AURA10",
+    "discount": 190,
+    "deliveryCharges": 0,
+    "total": 1709,
+    "status": "Order confirmed",
+    "paymentArrangement": "Payment will be confirmed with Aura Western on WhatsApp.",
+    "whatsappUrl": "https://wa.me/917690990903?text=AURA%20WESTERN%20ORDER",
+    "whatsappOpened": true,
+    "createdAt": "2026-10-16T15:26:45.013Z",
+    "updatedAt": "2026-10-16T15:26:45.067Z",
+    "statusTimeline": [
+      {
+        "status": "Awaiting WhatsApp confirmation",
+        "timestamp": "2026-10-16T15:26:45.013Z",
+        "note": "Order initiated from website"
+      },
+      {
+        "status": "Order confirmed",
+        "timestamp": "2026-10-16T15:26:45.067Z",
+        "note": "Payment received via UPI on WhatsApp"
+      }
+    ]
+  }
+]
