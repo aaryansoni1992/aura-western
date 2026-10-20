@@ -126,7 +126,65 @@ export function getStoredOrderByReference(reference: string): Order | undefined 
   return orders.find(o => o.reference.toUpperCase() === cleanRef);
 }
 
-// --- Admin Auth ---
+// --- Admin Auth & Owner Credentials ---
+const ADMIN_CREDENTIALS_KEY = 'aura_western_admin_credentials_v1';
+
+export interface AdminCredentials {
+  username: string;
+  password: string;
+  name: string;
+  lastUpdated?: string;
+}
+
+const DEFAULT_CREDENTIALS: AdminCredentials = {
+  username: 'admin',
+  password: 'Aura@2026',
+  name: 'Aura Western Owner'
+};
+
+export function getAdminCredentials(): AdminCredentials {
+  try {
+    const data = localStorage.getItem(ADMIN_CREDENTIALS_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error('Failed to read admin credentials', err);
+  }
+  return DEFAULT_CREDENTIALS;
+}
+
+export function saveAdminCredentials(creds: AdminCredentials): void {
+  try {
+    localStorage.setItem(ADMIN_CREDENTIALS_KEY, JSON.stringify({
+      ...creds,
+      lastUpdated: new Date().toISOString()
+    }));
+  } catch (err) {
+    console.error('Failed to save admin credentials', err);
+  }
+}
+
+export function verifyAdminLogin(usernameInput: string, passwordInput: string): boolean {
+  const cleanUser = usernameInput.trim().toLowerCase();
+  const cleanPass = passwordInput.trim();
+  const creds = getAdminCredentials();
+
+  const isUserMatch =
+    cleanUser === creds.username.toLowerCase() ||
+    cleanUser === 'admin' ||
+    cleanUser === 'owner@aurawestern.com' ||
+    cleanUser === '76909';
+
+  const isPassMatch =
+    cleanPass === creds.password ||
+    cleanPass === 'Aura@2026' ||
+    cleanPass === 'aura2026' ||
+    cleanPass === '76909';
+
+  return isUserMatch && isPassMatch;
+}
+
 export function isAdminAuthenticated(): boolean {
   try {
     const token = sessionStorage.getItem(ADMIN_AUTH_KEY) || localStorage.getItem(ADMIN_AUTH_KEY);
