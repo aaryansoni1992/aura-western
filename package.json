@@ -9,7 +9,7 @@
     "dev": "concurrently -k -p \"[{name}]\" -n \"SERVER,CLIENT\" -c \"yellow.bold,cyan.bold\" \"npm run dev:server\" \"npm run dev:frontend\"",
     "build:frontend": "tsc && vite build",
     "build:server": "tsc -p server/tsconfig.json",
-    "build": "npm run build:frontend",
+    "build": "npm run build:frontend && node scripts/build-standalone.js",
     "start": "node dist-server/index.js",
     "preview": "vite preview --host 0.0.0.0 --port 5173"
   },
