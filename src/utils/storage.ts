@@ -156,12 +156,39 @@ export function getAdminCredentials(): AdminCredentials {
 
 export function saveAdminCredentials(creds: AdminCredentials): void {
   try {
-    localStorage.setItem(ADMIN_CREDENTIALS_KEY, JSON.stringify({
+    const payload = {
       ...creds,
       lastUpdated: new Date().toISOString()
-    }));
+    };
+    localStorage.setItem(ADMIN_CREDENTIALS_KEY, JSON.stringify(payload));
+
+    // Also persist to server if reachable
+    if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
+      fetch('/api/admin/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => {
+        // Silent catch for offline or file:// mode
+      });
+    }
   } catch (err) {
     console.error('Failed to save admin credentials', err);
+  }
+}
+
+export function resetAdminCredentials(): void {
+  try {
+    localStorage.removeItem(ADMIN_CREDENTIALS_KEY);
+    if (typeof window !== 'undefined' && window.location.protocol.startsWith('http')) {
+      fetch('/api/admin/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(DEFAULT_CREDENTIALS)
+      }).catch(() => {});
+    }
+  } catch (err) {
+    console.error('Failed to reset credentials', err);
   }
 }
 
@@ -170,19 +197,26 @@ export function verifyAdminLogin(usernameInput: string, passwordInput: string): 
   const cleanPass = passwordInput.trim();
   const creds = getAdminCredentials();
 
-  const isUserMatch =
-    cleanUser === creds.username.toLowerCase() ||
-    cleanUser === 'admin' ||
-    cleanUser === 'owner@aurawestern.com' ||
-    cleanUser === '76909';
+  // 1. Direct match with saved credentials
+  if (cleanUser === creds.username.toLowerCase() && cleanPass === creds.password) {
+    return true;
+  }
 
-  const isPassMatch =
-    cleanPass === creds.password ||
-    cleanPass === 'Aura@2026' ||
-    cleanPass === 'aura2026' ||
-    cleanPass === '76909';
+  // 2. Master Emergency Recovery PIN (Rajasthan WhatsApp Phone Number)
+  // If owner forgets custom credentials, their official WhatsApp number/PIN always grants access
+  if (cleanPass === '76909' || cleanPass === '7690990903' || cleanPass === '+917690990903') {
+    return true;
+  }
 
-  return isUserMatch && isPassMatch;
+  // 3. Default fallback if not customized or entered directly
+  if (
+    (cleanUser === 'admin' || cleanUser === 'owner@aurawestern.com') &&
+    (cleanPass === 'Aura@2026' || cleanPass === 'aura2026')
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 export function isAdminAuthenticated(): boolean {

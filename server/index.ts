@@ -26,6 +26,7 @@ if (!fs.existsSync(DATA_DIR)) {
 const PRODUCTS_FILE = path.join(DATA_DIR, 'products.json');
 const ORDERS_FILE = path.join(DATA_DIR, 'orders.json');
 const COUPONS_FILE = path.join(DATA_DIR, 'coupons.json');
+const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
 
 // Helper to read JSON
 function readJson<T>(filePath: string, defaultValue: T): T {
@@ -167,6 +168,31 @@ app.delete('/api/coupons/:code', (req: Request, res: Response) => {
   coupons = coupons.filter((c) => c.code.toUpperCase() !== code.toUpperCase());
   writeJson(COUPONS_FILE, coupons);
   res.json({ success: true });
+});
+
+// --- ADMIN CREDENTIALS API ---
+app.get('/api/admin/credentials', (req: Request, res: Response) => {
+  const creds = readJson(ADMIN_FILE, {
+    username: 'admin',
+    password: 'Aura@2026',
+    name: 'Aura Western Owner'
+  });
+  res.json(creds);
+});
+
+app.post('/api/admin/credentials', (req: Request, res: Response) => {
+  const { username, password, name } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+  const creds = {
+    username: String(username).trim(),
+    password: String(password).trim(),
+    name: name ? String(name).trim() : 'Aura Western Owner',
+    updatedAt: new Date().toISOString()
+  };
+  writeJson(ADMIN_FILE, creds);
+  res.json({ success: true, creds });
 });
 
 // --- SERVE COMPILED FRONTEND FOR ANY NON-API ROUTE ---
